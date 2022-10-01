@@ -30,15 +30,15 @@ const AppNavigator = createStackNavigator({
   orderTracking:{
     screen:OrderTracking,
     navigationOptions: {
-      title:'Order Tracking'
+      title:'Order Details'
     }
   },
-  chat:{
-    screen:Chat,
-    navigationOptions: {
-      title:'Chat'
-    }
-  }
+  // chat:{
+  //   screen:Chat,
+  //   navigationOptions: {
+  //     title:'Chat'
+  //   }
+  // }
 });
 
 const AppContainer = createAppContainer(AppNavigator);

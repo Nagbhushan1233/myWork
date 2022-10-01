@@ -33,6 +33,7 @@ class Login extends React.Component {
                         value={this.state.password}
                         placeholder="Password"
                         placeholderTextColor="#003f5c"
+                        secureTextEntry={true}
                         onChangeText={text => this.setState({ password: text })} />
                 </View>
 

@@ -8,8 +8,11 @@ import {
     TouchableOpacity
 } from "react-native"
 class Orders extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props)
+        this.state={
+            products:[]
+        }
     }
 
     renderSeparator = () => {
@@ -24,44 +27,58 @@ class Orders extends React.Component {
         );
     };
 
+    componentDidMount() {
+        fetch('https://uat.grandiose.ae/rest/V1/products/6291030200070', {
+            method:'GET',
+            credentials: 'include',
+            headers: {
+                Authorization:"Bearer 3ogqzxcpd6teaww79puqjiibgbcy11a1",
+                'Content-Type': "application/json"
+            },
+            
+        }).then(resp => resp.json())
+        .then(json => {
+            const productArray = [json];
+            this.setState({products:productArray})
+        })
+    }
     render() {
         return (
             <View style={styles.container}>
                 <FlatList
-                    data={[
-                        { "title": 'iPhone 7', "orderId": "OID987654321", "price": "₹50,0000" },
-                        { "title": 'Redme Note7 Pro', "orderId": "OID567891011", "price": "₹12,000" },
-                        { "title": 'Samsung Galaxy F41', "orderId": "OID432156789", "price": "₹14,000" },
-                    ]}
+                    data={this.state.products}
                     renderItem={({ item, index }) =>
                         <TouchableOpacity
-                        onPress={()=>{
-                            item.index = index;
-                            this.props.navigation.navigate('orderTracking',item)
-                        }}
+                            onPress={() => {
+                                item.index = index;
+                                this.props.navigation.navigate('orderTracking', item)
+                            }}
                         >
                             <View style={styles.orderItemView}>
                                 {
-                                    index == 0 ? <Image
-                                        source={require('../assets/iPhone7.png')}
-                                        style={styles.orderImage} /> : (index == 1 ? <Image
-                                            source={require('../assets/redmenote7.png')}
-                                            style={styles.orderImage} /> : <Image
-                                            source={require('../assets/samsungF41.png')}
-                                            style={styles.orderImage} />)
+                                    this.state.products && <Image
+                                    style={styles.orderImage}
+                                    source={
+                                        {
+                                            uri: `https://uat.grandiose.ae/media/catalog/product` + this.state.products[index].media_gallery_entries[0].file, 
+                                            headers: {
+                                                Authorization: 'Bearer 3ogqzxcpd6teaww79puqjiibgbcy11a1'
+                                            }
+                                        }
+                                    } />
 
                                 }
                                 <View style={styles.orderDetailsView}>
-                                    <Text style={styles.orderTitle}>{item.title}</Text>
-                                    <Text style={styles.price}>{item.price}</Text>
-                                    <Text style={styles.orderId}>{item.orderId}</Text>
+                                    <Text style={styles.orderTitle}>{item.name}</Text>
+                                    <Text style={styles.price}>{item.sku}</Text>
+                                    <Text style={styles.orderId}>{'$ '+item.price}</Text>
                                 </View>
                                 <Image source={require('../assets/arrow.png')} style={styles.arrow} />
                             </View>
                         </TouchableOpacity>
                     }
                     ItemSeparatorComponent={this.renderSeparator}
-                    style={{marginTop:5}}
+                    style={{ marginTop: 5 }}
                 />
             </View>
         );
@@ -90,6 +107,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 2,
+        width:200,
     },
     orderId: {
         color: 'grey',
